@@ -1,0 +1,9 @@
+<div class="container-sm d-flex flex-column align-items-center pt-5 h-100">
+  <h1 id="headTitle" class="flex-grow-0">PostBox</h1>
+  <div class="d-flex flex-grow-1 align-self-stretch justify-content-center align-items-center">
+    <app-postbox-content class="w-100"></app-postbox-content>
+  </div>
+  <div class="flex-grow-0 mb-5">
+    <button (click)="subscribe()" class="btn btn-light" type="button">Subscribe<fa-icon class="pl-2" [icon]="faBell"></fa-icon></button>
+  </div>
+</div>

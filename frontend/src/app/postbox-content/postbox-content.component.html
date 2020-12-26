@@ -1,0 +1,11 @@
+<div id="container" class="text-center d-flex flex-column" *ngIf="!empty">
+  <p>You have new posts!</p>
+  <span class="font-weight-bold postsNumber">3<fa-icon class="pl-2" [icon]="faEnvelopeOpenText"></fa-icon></span>
+  <button type="button" class="btn btn-primary btn-block mt-4">Clear the box</button>
+</div>
+
+<div id="container" class="text-center d-flex flex-column" *ngIf="empty">
+  You don't have any new posts
+  <br />
+  <span class="font-weight-bold postsNumber pt-3">😢</span>
+</div>
