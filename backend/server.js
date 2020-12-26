@@ -1,10 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
 const webpush = require('web-push');
+
+var https = require('https');
+var http = require('http');
+var fs = require('fs');
 // Create a new express app instance
 const app = express();
+
+var options = {
+  key: fs.readFileSync('client-key.pem'),
+  cert: fs.readFileSync('client-cert.pem')
+};
 
 const vapidKeys = {
 	publicKey  : 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA',
@@ -31,10 +40,11 @@ const uri = process.env.MONGO_DB;
 
 MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 	const collection = client.db('PostBox').collection('devices');
-    // perform actions on the collection object
-	app.listen(3000, function() {
-		console.log('App is listening on port 3000!');
-	});
+	// perform actions on the collection object
+	// Create an HTTP service.
+	http.createServer(app).listen(80);
+	// Create an HTTPS service identical to the HTTP service.
+	https.createServer(options, app).listen(443);
 
 	app.use(bodyParser.json());
 
@@ -46,13 +56,13 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 	});
 
 	app.post('/api/subscribe', async (req, res) => {
-        console.log('/subscribe')
+		console.log('/subscribe');
 		try {
-            await checkIfDeviceExist(collection, req.body.token);
-            console.log('exists')
+			await checkIfDeviceExist(collection, req.body.token);
+			console.log('exists');
 		} catch (e) {
-            collection.insertOne(req.body).catch((e) => console.log(e));
-            console.log('not exists')
+			collection.insertOne(req.body).catch((e) => console.log(e));
+			console.log('not exists');
 		}
 		res.status(200);
 		res.send();
@@ -60,7 +70,7 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 
 	app.get('/api/send', (req, res) => {
 		sendNotification(collection, res);
-    });
+	});
 });
 
 function checkIfDeviceExist(collection, token) {

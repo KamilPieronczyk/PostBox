@@ -13,7 +13,7 @@ export class NotificationsService {
   readonly publicVapidKey:string = 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA'
   token: string = ""
   sub?:PushSubscription
-  readonly serverURL: string = "http://192.168.0.66:3000/api"
+  readonly serverURL: string = "https://192.168.0.66:443/api"
 
   constructor(private cookieService:CookieService, private swPush: SwPush,private http: HttpClient) {
     if(this.cookieService.check('token')){
