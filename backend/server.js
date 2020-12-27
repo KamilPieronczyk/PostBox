@@ -3,17 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
 const webpush = require('web-push');
-
-var https = require('https');
-var http = require('http');
-var fs = require('fs');
+const PORT = process.env.PORT || 3000
 // Create a new express app instance
-const app = express();
-
-var options = {
-  key: fs.readFileSync('client-key.pem'),
-  cert: fs.readFileSync('client-cert.pem')
-};
+const app = require("express")
 
 const vapidKeys = {
 	publicKey  : 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA',
@@ -42,9 +34,9 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 	const collection = client.db('PostBox').collection('devices');
 	// perform actions on the collection object
 	// Create an HTTP service.
-	http.createServer(app).listen(80);
-	// Create an HTTPS service identical to the HTTP service.
-	https.createServer(options, app).listen(443);
+	app.listen(PORT, () => {
+		console.log('App listening on port: ', PORT)
+	})
 
 	app.use(bodyParser.json());
 
@@ -69,6 +61,7 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 	});
 
 	app.get('/api/send', (req, res) => {
+		console.log('sending note...')
 		sendNotification(collection, res);
 	});
 });
