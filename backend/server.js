@@ -5,7 +5,7 @@ require('dotenv').config();
 const webpush = require('web-push');
 const PORT = process.env.PORT || 3000
 // Create a new express app instance
-const app = require("express")
+const app = express()
 
 const vapidKeys = {
 	publicKey  : 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA',
