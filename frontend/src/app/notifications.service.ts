@@ -13,7 +13,8 @@ export class NotificationsService {
   readonly publicVapidKey:string = 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA'
   token: string = ""
   sub?:PushSubscription
-  readonly serverURL: string = "https://89.74.231.9:443/api"
+  readonly serverURL: string = "https://postbox-server.herokuapp.com//api"
+  //readonly serverURL: string = "http://localhost/api"
 
   constructor(private cookieService:CookieService, private swPush: SwPush,private http: HttpClient) {
     if(this.cookieService.check('token')){
