@@ -15,11 +15,12 @@ export class AppComponent implements OnInit {
   constructor(private postsService:PostsService){}
 
   async ngOnInit() {
-    console.log(await this.postsService.isSubscribing())
+    this.isSubscribing = await this.postsService.isSubscribing()
+    console.log('isSubscribing',await this.postsService.isSubscribing())
   }
 
   async subscribe(){
     await this.postsService.subscribe()
-    await this.postsService.isSubscribing()
+    this.isSubscribing = await this.postsService.isSubscribing()
   }
 }

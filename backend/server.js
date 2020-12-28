@@ -54,7 +54,7 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 			await checkIfDeviceExist(collection, req.body.token);
 			console.log('exists');
 		} catch (e) {
-			collection.insertOne(req.body).catch((e) => console.log(e));
+			await collection.insertOne(req.body);
 			console.log('not exists');
 		}
 		res.status(200);
