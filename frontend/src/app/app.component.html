@@ -4,6 +4,7 @@
     <app-postbox-content class="w-100"></app-postbox-content>
   </div>
   <div class="flex-grow-0 mb-5">
-    <button (click)="subscribe()" class="btn btn-light" type="button">Subscribe<fa-icon class="pl-2" [icon]="faBell"></fa-icon></button>
+    <button (click)="subscribe()" class="btn btn-light" type="button" *ngIf="!isSubscribing">Subscribe<fa-icon class="pl-2" [icon]="faBell"></fa-icon></button>
+    <p *ngIf="isSubscribing">You are now subscribing 👏</p>
   </div>
 </div>

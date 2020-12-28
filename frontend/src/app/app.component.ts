@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {faBell} from '@fortawesome/free-solid-svg-icons'
-import {NotificationsService} from './notifications.service'
+import {PostsService} from './notifications.service'
 
 @Component({
   selector: 'app-root',
@@ -10,14 +10,16 @@ import {NotificationsService} from './notifications.service'
 export class AppComponent implements OnInit {
   title = 'PostBox'
   faBell = faBell
+  isSubscribing = false
 
-  constructor(private notificationsService:NotificationsService){}
+  constructor(private postsService:PostsService){}
 
-  ngOnInit(): void {
-
+  async ngOnInit() {
+    console.log(await this.postsService.isSubscribing())
   }
 
-  subscribe(){
-    this.notificationsService.subscribe()
+  async subscribe(){
+    await this.postsService.subscribe()
+    await this.postsService.isSubscribing()
   }
 }

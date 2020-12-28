@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import {CookieService} from 'ngx-cookie-service'
 import { v4 as uuidv4 } from 'uuid';
 import { SwPush } from '@angular/service-worker';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { environment } from '../environments/environment'
+import { analyzeFileForInjectables } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationsService {
+export class PostsService {
 
   readonly publicVapidKey:string = 'BL0PoiuUFuwDpl2nwta9GAgXwhCzjPkBFZBm-Tf5wzItLwhg5CqNbQWUscBQl7uzZbse-rNVpIklXdmVPIitEzA'
   token: string = ""
   sub?:PushSubscription
-  readonly serverURL: string = "https://postbox-server.herokuapp.com/api"
-  //readonly serverURL: string = "http://localhost/api"
+  readonly serverURL: string = environment.API_URL
 
   constructor(private cookieService:CookieService, private swPush: SwPush,private http: HttpClient) {
     if(this.cookieService.check('token')){
@@ -59,18 +59,34 @@ export class NotificationsService {
     })
   }
 
-  private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding: string = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64: string = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-
-    const rawData: string = window.atob(base64);
-    const outputArray: Uint8Array = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
+  async isSubscribing(){
+    const params = new HttpParams().set('token', this.token)
+    try {
+      let res: any = await this.http.get(this.serverURL + '/isSubscribing', {params: params}).toPromise();
+      return res.isSubscribing;
+    } catch (error) {
+      console.error('isSubscribing error', error)
+      return false;
     }
-    return outputArray;
+  }
+
+  async getPosts(){
+    try {
+      let res: any = await this.http.get(this.serverURL + '/posts').toPromise();
+      return res.value;
+    } catch (error) {
+      console.error('getPosts error', error)
+      return 0;
+    }
+  }
+
+  async deletePosts(){
+    try {
+      let res: any = await this.http.delete(this.serverURL + '/posts').toPromise();
+      return true;
+    } catch (error) {
+      console.error('deletePosts error', error)
+      return false;
+    }
   }
 }

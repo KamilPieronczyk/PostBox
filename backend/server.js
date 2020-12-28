@@ -32,6 +32,7 @@ const uri = process.env.MONGO_DB;
 
 MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 	const collection = client.db('PostBox').collection('devices');
+	const dbPosts = client.db('PostBox').collection('posts');
 	// perform actions on the collection object
 	// Create an HTTP service.
 	app.listen(PORT, () => {
@@ -60,11 +61,50 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 		res.send();
 	});
 
+	app.get('/api/isSubscribing',async (req, res) => {
+		const token = req.query.token
+		console.log(token)
+		if(!token){
+			res.status(400)
+			res.json({tokenError: 'Token is not given'})
+			return;
+		}
+		const devices = await collection.findOne({token: token})
+		res.status(200)
+		res.json({isSubscribing: devices ? true : false})
+	})
+
 	app.get('/api/send', (req, res) => {
 		console.log('sending note...')
 		sendNotification(collection, res);
 	});
+
+	app.get('/api/posts', async (req, res) => {
+		res.status(200)
+		res.json({value: await getPosts(dbPosts)})
+	})
+
+	app.post('/api/posts', (req, res) => {
+		updatePosts(dbPosts, req.body.value)
+		res.status(200)
+		res.send()
+	})
+
+	app.delete('/api/posts', (req, res) => {
+		dbPosts.drop()
+		res.status(200)
+		res.send()
+	})
 });
+
+async function getPosts(posts){
+		const post = await posts.findOne({name: 'posts'})
+		return post ? post.value : 0
+}
+
+async function updatePosts(posts, val){
+	await posts.updateOne({name: 'posts'}, {$inc: {value: val}}, {upsert: true})
+}
 
 function checkIfDeviceExist(collection, token) {
 	return new Promise((resolve, reject) => {
