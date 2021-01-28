@@ -86,12 +86,24 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
 
 	app.post('/api/posts', (req, res) => {
 		updatePosts(dbPosts, req.body.value)
+		sendNotification(collection, res);
 		res.status(200)
 		res.send()
 	})
 
 	app.delete('/api/posts', (req, res) => {
 		dbPosts.drop()
+		res.status(200)
+		res.send()
+	})
+
+	app.get('/api/batteryLevel', async (req, res) => {
+		res.status(200)
+		res.json({value: await getBatteryLevel(dbPosts)})
+	})
+
+	app.post('/api/batteryLevel', (req, res) => {
+		updateBatteryLevel(dbPosts, req.body.value)
 		res.status(200)
 		res.send()
 	})
@@ -104,6 +116,15 @@ async function getPosts(posts){
 
 async function updatePosts(posts, val){
 	await posts.updateOne({name: 'posts'}, {$inc: {value: val}}, {upsert: true})
+}
+
+async function getBatteryLevel(posts){
+	const post = await posts.findOne({name: 'posts'})
+	return post ? post.battery : 0
+}
+
+async function updateBatteryLevel(posts, val){
+	await posts.updateOne({name: 'posts'}, {$set: {battery: val}}, {upsert: true})
 }
 
 function checkIfDeviceExist(collection, token) {
